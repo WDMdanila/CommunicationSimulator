@@ -23,17 +23,7 @@ public:
 
         if (!should_work) {
             should_work = true;
-
-            for (auto& channel: channels) {
-                assert(channel);
-                workers.push_back(
-                    std::thread(
-                        [&] {
-                            while (should_work) {
-                                std::invoke(receiver, *channel);
-                            }
-                        }));
-            }
+            createWorkers();
         }
     }
 
@@ -51,7 +41,26 @@ public:
         return should_work;
     }
 
+    std::weak_ptr<CommunicationChannel> getChannel() {
+        auto channel = std::make_shared<CommunicationChannel>();
+        channels.push_back(channel);
+        return channel;
+    }
+
 private:
+    void createWorkers() {
+        for (auto& channel: channels) {
+            assert(channel);
+            workers.push_back(
+                std::thread(
+                    [&] {
+                        while (should_work) {
+                            std::invoke(receiver, *channel);
+                        }
+                    }));
+        }
+    }
+
     std::vector<std::shared_ptr<CommunicationChannel>> channels;
     ReceiverFunction receiver;
     std::vector<std::thread> workers;

@@ -21,3 +21,10 @@ TEST(ProviderSwarmUnitTests, shouldCreateFromVector) {
     ASSERT_EQ(providers_count, expected_providers_count);
     ASSERT_EQ(swarm.size(), expected_providers_count);
 }
+
+TEST(ProviderSwarmUnitTests, shouldAddProvider) {
+    ProviderSwarm<int> swarm {{}};
+    swarm.add(std::unique_ptr<Provider<int>>());
+
+    ASSERT_EQ(swarm.size(), 1);
+}

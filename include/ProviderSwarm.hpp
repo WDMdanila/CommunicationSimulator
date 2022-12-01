@@ -21,6 +21,8 @@ public:
         }
     }
 
+    void add(std::unique_ptr<Provider<T>> provider) {providers.push_back(std::move(provider));}
+
     auto operator [](size_t i) noexcept {
         return providers[i];
     }
