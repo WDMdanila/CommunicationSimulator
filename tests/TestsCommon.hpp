@@ -3,10 +3,13 @@
 #include <gtest/gtest.h>
 #include <oneapi/tbb/concurrent_queue.h>
 #include <optional>
+
 template <typename T>
 T generator_func();
+
 template <typename T>
 void sender_func(oneapi::tbb::concurrent_queue<T>& queue, T val);
+
 template <typename T>
 void requester_func(oneapi::tbb::concurrent_queue<T>& queue);
 
