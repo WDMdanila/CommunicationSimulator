@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "ProviderSwarm.hpp"
 
+#include "../TestsCommon.hpp"
+
 TEST(ProviderSwarmUnitTests, shouldCreate) {
     ASSERT_NO_THROW((ProviderSwarm<int>{{}}));
 }
@@ -25,6 +27,13 @@ TEST(ProviderSwarmUnitTests, shouldCreateFromVector) {
 TEST(ProviderSwarmUnitTests, shouldAddProvider) {
     ProviderSwarm<int> swarm {{}};
     swarm.add(std::unique_ptr<Provider<int>>());
+
+    ASSERT_EQ(swarm.size(), 1);
+}
+
+TEST(ProviderSwarmUnitTests, shouldEmplaceProvider) {
+    ProviderSwarm<int> swarm {{}};
+    swarm.emplace(std::weak_ptr<oneapi::tbb::concurrent_queue<int>>{}, GeneratorObj<int>{}, SenderObj<int>{});
 
     ASSERT_EQ(swarm.size(), 1);
 }

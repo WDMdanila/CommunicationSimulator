@@ -9,6 +9,8 @@ int main() {
     auto [swarm, requester] = factory.create_swarm(10, Generator{}, Sender{}, Receiver{});
     printf("created swarm, starting...\n");
 
+    swarm->emplace(requester->getChannel(), Generator{}, Sender{});
+
     swarm->start();
     requester->start();
 
