@@ -3,25 +3,31 @@
 #include <optional>
 
 int main() {
+#ifdef NDEBUG
+    spdlog::set_level(spdlog::level::info);
+#else
+    spdlog::set_level(spdlog::level::debug);
+#endif
+
     CommunicationFactory<uint> factory {};
 
-    printf("creating swarm...\n");
+    spdlog::info("creating swarm");
     auto [swarm, requester] = factory.create_swarm(10, Generator{}, Sender{}, Receiver{});
-    printf("created swarm, starting...\n");
+    spdlog::info("created swarm, starting");
 
     swarm->emplace(requester->getChannel(), Generator{}, Sender{});
 
     swarm->start();
     requester->start();
 
-    printf("started, waiting for second...\n");
+    spdlog::info("started, waiting for second");
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    printf("done waiting, stopping...\n");
+    spdlog::info("done waiting, stopping");
     swarm->stop();
     requester->stop();
-    printf("generated: %d\n", Generator<>::counter.load());
-    printf("sent: %d\n", Sender<>::counter.load());
-    printf("received: %d\n", Receiver<>::counter.load());
+    spdlog::info("total generated: {}", Generator<>::counter.load());
+    spdlog::info("total sent: {}", Sender<>::counter.load());
+    spdlog::info("total received: {}", Receiver<>::counter.load());
 
     return 0;
 }
