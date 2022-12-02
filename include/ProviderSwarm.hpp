@@ -8,7 +8,7 @@ class ProviderSwarm {
 public:
     explicit ProviderSwarm(std::vector<std::unique_ptr<Provider<T>>> providers)
         : providers(std::move(providers)) {
-        assert(std::all_of(this->providers.begin(), this->providers.end(), [] (auto& obj) {return bool(obj);}));
+        assert(std::all_of(this->providers.begin(), this->providers.end(), [] (auto& obj) {return static_cast<bool>(obj);}));
         spdlog::debug("provider swarm created with {} providers", this->providers.size());
     }
 

@@ -31,15 +31,11 @@ public:
     }
 
     void stop() {
-        spdlog::debug("requester stopping");
-        should_work.exchange(false, std::memory_order::acquire);
-
-        for (auto& worker: workers) {
-            if (worker.joinable()) {
-                worker.join();
-            }
+        if (should_work) {
+            spdlog::debug("requester stopping");
+            should_work.exchange(false, std::memory_order::acquire);
+            spdlog::debug("requester stopped");
         }
-        spdlog::debug("requester stopped");
     }
 
     [[nodiscard]] bool isRunning() const {
@@ -59,7 +55,7 @@ private:
         for (auto& channel: channels) {
             assert(channel);
             workers.push_back(
-                std::thread(
+                std::jthread(
                     [&] {
                         while (should_work) {
                             std::invoke(receiver, *channel);
@@ -71,6 +67,6 @@ private:
 
     std::vector<std::shared_ptr<CommunicationChannel>> channels;
     ReceiverFunction receiver;
-    std::vector<std::thread> workers;
+    std::vector<std::jthread> workers;
     std::atomic_bool should_work;
 };

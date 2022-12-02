@@ -28,7 +28,7 @@ public:
         if (!should_work) {
             spdlog::debug("provider starting");
             should_work = true;
-            worker = std::thread(
+            worker = std::jthread(
                 [&] {
                     while (should_work) {
                         if (auto chan = channel.lock()) {
@@ -44,13 +44,11 @@ public:
     }
 
     void stop() {
-        spdlog::debug("provider stopping");
-        should_work.exchange(false, std::memory_order::acquire);
-
-        if (worker.joinable()) {
-            worker.join();
+        if (should_work) {
+            spdlog::debug("provider stopping");
+            should_work.exchange(false, std::memory_order::acquire);
+            spdlog::debug("provider stopped");
         }
-        spdlog::debug("provider stopped");
     }
 
     [[nodiscard]] bool isRunning() const {
@@ -61,6 +59,6 @@ private:
     std::weak_ptr<CommunicationChannel> channel;
     GeneratorFunction generator;
     SenderFunction sender;
-    std::thread worker;
+    std::jthread worker;
     std::atomic_bool should_work;
 };
