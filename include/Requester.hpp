@@ -1,6 +1,7 @@
 #pragma once
 
 #include <oneapi/tbb/concurrent_queue.h>
+#include <spdlog/spdlog.h>
 #include <functional>
 #include <list>
 
@@ -20,14 +21,17 @@ public:
 
     void start() {
         assert(receiver);
+        spdlog::debug("requester starting");
 
         if (!should_work) {
             should_work = true;
             createWorkers();
         }
+        spdlog::debug("requester started");
     }
 
     void stop() {
+        spdlog::debug("requester stopping");
         should_work.exchange(false, std::memory_order::acquire);
 
         for (auto& worker: workers) {
@@ -35,6 +39,7 @@ public:
                 worker.join();
             }
         }
+        spdlog::debug("requester stopped");
     }
 
     [[nodiscard]] bool isRunning() const {
@@ -49,6 +54,8 @@ public:
 
 private:
     void createWorkers() {
+        spdlog::debug("requester creating workers");
+
         for (auto& channel: channels) {
             assert(channel);
             workers.push_back(
@@ -59,6 +66,7 @@ private:
                         }
                     }));
         }
+        spdlog::debug("requester created workers");
     }
 
     std::vector<std::shared_ptr<CommunicationChannel>> channels;

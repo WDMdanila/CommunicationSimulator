@@ -12,7 +12,11 @@ TEST(ProviderSwarmUnitTests, shouldCreateFromVector) {
     std::vector<std::unique_ptr<Provider<int>>> providers {};
 
     for (int i = 0; i < expected_providers_count; i++) {
-        providers.push_back(std::unique_ptr<Provider<int>>());
+        providers.push_back(
+            std::make_unique<Provider<int>>(
+                std::weak_ptr<oneapi::tbb::concurrent_queue<int>>{},
+                GeneratorObj<int>{},
+                SenderObj<int>{}));
     }
     ProviderSwarm<int> swarm {std::move(providers)};
     int providers_count {0};
@@ -26,7 +30,11 @@ TEST(ProviderSwarmUnitTests, shouldCreateFromVector) {
 
 TEST(ProviderSwarmUnitTests, shouldAddProvider) {
     ProviderSwarm<int> swarm {{}};
-    swarm.add(std::unique_ptr<Provider<int>>());
+    swarm.add(
+        std::make_unique<Provider<int>>(
+            std::weak_ptr<oneapi::tbb::concurrent_queue<int>>{},
+            GeneratorObj<int>{},
+            SenderObj<int>{}));
 
     ASSERT_EQ(swarm.size(), 1);
 }

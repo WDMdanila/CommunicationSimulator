@@ -1,6 +1,7 @@
 #pragma once
 
 #include <oneapi/tbb/concurrent_queue.h>
+#include <spdlog/spdlog.h>
 #include <cassert>
 #include <functional>
 
@@ -25,6 +26,7 @@ public:
         assert(sender);
 
         if (!should_work) {
+            spdlog::debug("provider starting");
             should_work = true;
             worker = std::thread(
                 [&] {
@@ -37,15 +39,18 @@ public:
                         }
                     }
                 });
+            spdlog::debug("provider started");
         }
     }
 
     void stop() {
+        spdlog::debug("provider stopping");
         should_work.exchange(false, std::memory_order::acquire);
 
         if (worker.joinable()) {
             worker.join();
         }
+        spdlog::debug("provider stopped");
     }
 
     [[nodiscard]] bool isRunning() const {
