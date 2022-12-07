@@ -1,6 +1,5 @@
 #include "CommunicationFactory.hpp"
 #include "Utilities.hpp"
-#include <optional>
 
 int main() {
 #ifdef NDEBUG
