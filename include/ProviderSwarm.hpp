@@ -12,7 +12,11 @@ public:
         spdlog::debug("provider swarm created with {} providers", this->providers.size());
     }
 
-    ~ProviderSwarm() {stop();}
+    ~ProviderSwarm() {
+        spdlog::debug("provider swarm destructing");
+        stop();
+        spdlog::debug("provider swarm destructed");
+    }
 
     void start() {
         spdlog::debug("provider swarm starting");
