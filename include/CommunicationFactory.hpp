@@ -29,11 +29,7 @@ public:
         for (uint i {0}; i < num; i++) {
             auto queue = std::make_shared<oneapi::tbb::concurrent_queue<T>>();
             queues.push_back(queue);
-            providers.emplace_back(
-                std::make_unique<Provider<T>>(
-                    std::move(queue),
-                    generator,
-                    sender));
+            providers.emplace_back(std::make_unique<Provider<T>>(std::move(queue), generator, sender));
         }
         return {std::make_unique<ProviderSwarm<T>>(std::move(providers)),
                 std::make_unique<Requester<T>>(queues, std::forward<R>(requester))};
