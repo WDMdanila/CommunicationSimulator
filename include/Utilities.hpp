@@ -70,3 +70,15 @@ struct Receiver {
     static inline std::atomic_uint counter {0};
     static inline LockPolicy::MutexType mutex;
 };
+
+#define REGISTER_FUNC_OBJECT(class_name) \
+    using Default ## class_name = class_name<>; \
+    template <typename Duration = std::chrono::seconds, int num = 1> \
+    using Sleeping ## class_name = class_name<SleepPolicy<Duration, num>>; \
+    using Blocking ## class_name = class_name<NoWaitPolicy, UniqueLockPolicy>; \
+    template <typename Duration = std::chrono::seconds, int num = 1> \
+    using SleepingBlocking ## class_name = class_name<SleepPolicy<Duration, num>, UniqueLockPolicy>;
+
+REGISTER_FUNC_OBJECT(Generator)
+REGISTER_FUNC_OBJECT(Sender)
+REGISTER_FUNC_OBJECT(Receiver)

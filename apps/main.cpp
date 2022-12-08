@@ -11,10 +11,10 @@ int main() {
     CommunicationFactory<uint> factory {};
 
     spdlog::info("creating swarm");
-    auto [swarm, requester] = factory.create_swarm(10, Generator{}, Sender{}, Receiver{});
+    auto [swarm, requester] = factory.create_swarm(10, DefaultGenerator {}, DefaultSender{}, DefaultReceiver{});
     spdlog::info("created swarm, starting");
 
-    swarm->emplace(requester->getChannel(), Generator{}, Sender{});
+    swarm->emplace(requester->getChannel(), DefaultGenerator {}, DefaultSender{});
 
     swarm->start();
     requester->start();
@@ -24,9 +24,9 @@ int main() {
     spdlog::info("done waiting, stopping");
     swarm->stop();
     requester->stop();
-    spdlog::info("total generated: {}", Generator<>::counter.load());
-    spdlog::info("total sent: {}", Sender<>::counter.load());
-    spdlog::info("total received: {}", Receiver<>::counter.load());
+    spdlog::info("total generated: {}", DefaultGenerator::counter.load());
+    spdlog::info("total sent: {}", DefaultSender::counter.load());
+    spdlog::info("total received: {}", DefaultReceiver::counter.load());
 
     return 0;
 }
