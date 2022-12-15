@@ -25,16 +25,16 @@ public:
         assert(generator);
         assert(sender);
 
-        if (!should_work) {
+        if (!is_running) {
             spdlog::debug("provider starting");
-            should_work = true;
+            is_running = true;
             worker = std::jthread(
                 [&] {
-                    while (should_work) {
+                    while (is_running) {
                         if (auto chan = channel.lock()) {
                             std::invoke(sender, *chan, std::invoke(generator));
                         } else {
-                            should_work.exchange(false, std::memory_order::acquire);
+                            is_running.exchange(false, std::memory_order::acquire);
                             break;
                         }
                     }
@@ -44,15 +44,15 @@ public:
     }
 
     void stop() {
-        if (should_work) {
+        if (is_running) {
             spdlog::debug("provider stopping");
-            should_work.exchange(false, std::memory_order::acquire);
+            is_running.exchange(false, std::memory_order::acquire);
             spdlog::debug("provider stopped");
         }
     }
 
-    [[nodiscard]] bool isRunning() const {
-        return should_work;
+    [[nodiscard]] bool isRunning() const noexcept {
+        return is_running;
     }
 
 private:
@@ -60,5 +60,5 @@ private:
     GeneratorFunction generator;
     SenderFunction sender;
     std::jthread worker;
-    std::atomic_bool should_work;
+    std::atomic_bool is_running;
 };

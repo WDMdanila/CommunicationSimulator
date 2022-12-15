@@ -5,15 +5,15 @@
 #include <functional>
 #include <list>
 
-template <typename T>
+template<typename T>
 class Requester {
     using CommunicationChannel = oneapi::tbb::concurrent_queue<T>;
-    using ReceiverFunction = std::function<void (CommunicationChannel&)>;
+    using ReceiverFunction = std::function<void(CommunicationChannel &)>;
 public:
-    template <typename R>
-    Requester(std::vector<std::shared_ptr<CommunicationChannel>> channels, R&& receiver)
-        : channels(std::move(channels)),
-          receiver(receiver) {}
+    template<typename R>
+    Requester(std::vector<std::shared_ptr<CommunicationChannel>> channels, R &&receiver)
+            : channels(std::move(channels)),
+              receiver(receiver) {}
 
     ~Requester() {
         stop();
@@ -23,23 +23,23 @@ public:
         assert(receiver);
         spdlog::debug("requester starting");
 
-        if (!should_work) {
-            should_work = true;
+        if (!is_running) {
+            is_running = true;
             createWorkers();
         }
         spdlog::debug("requester started");
     }
 
     void stop() {
-        if (should_work) {
+        if (is_running) {
             spdlog::debug("requester stopping");
-            should_work.exchange(false, std::memory_order::acquire);
+            is_running.exchange(false, std::memory_order::acquire);
             spdlog::debug("requester stopped");
         }
     }
 
-    [[nodiscard]] bool isRunning() const {
-        return should_work;
+    [[nodiscard]] bool isRunning() const noexcept {
+        return is_running;
     }
 
     std::weak_ptr<CommunicationChannel> getChannel() {
@@ -52,15 +52,15 @@ private:
     void createWorkers() {
         spdlog::debug("requester creating workers");
 
-        for (auto& channel: channels) {
+        for (auto &channel: channels) {
             assert(channel);
             workers.push_back(
-                std::jthread(
-                    [&] {
-                        while (should_work) {
-                            std::invoke(receiver, *channel);
-                        }
-                    }));
+                    std::jthread(
+                            [&] {
+                                while (is_running) {
+                                    std::invoke(receiver, *channel);
+                                }
+                            }));
         }
         spdlog::debug("requester created workers");
     }
@@ -68,5 +68,5 @@ private:
     std::vector<std::shared_ptr<CommunicationChannel>> channels;
     ReceiverFunction receiver;
     std::vector<std::jthread> workers;
-    std::atomic_bool should_work;
+    std::atomic_bool is_running;
 };
