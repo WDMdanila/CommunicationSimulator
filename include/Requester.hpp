@@ -5,15 +5,15 @@
 #include <functional>
 #include <list>
 
-template<typename T>
+template <typename T>
 class Requester {
     using CommunicationChannel = oneapi::tbb::concurrent_queue<T>;
-    using ReceiverFunction = std::function<void(CommunicationChannel &)>;
+    using ReceiverFunction = std::function<void (CommunicationChannel&)>;
 public:
-    template<typename R>
-    Requester(std::vector<std::shared_ptr<CommunicationChannel>> channels, R &&receiver)
-            : channels(std::move(channels)),
-              receiver(receiver) {}
+    template <typename R>
+    Requester(std::vector<std::shared_ptr<CommunicationChannel>> channels, R&& receiver)
+        : channels(std::move(channels)),
+          receiver(receiver) {}
 
     ~Requester() {
         stop();
@@ -52,15 +52,15 @@ private:
     void createWorkers() {
         spdlog::debug("requester creating workers");
 
-        for (auto &channel: channels) {
+        for (auto& channel: channels) {
             assert(channel);
             workers.push_back(
-                    std::jthread(
-                            [&] {
-                                while (is_running) {
-                                    std::invoke(receiver, *channel);
-                                }
-                            }));
+                std::jthread(
+                    [&] {
+                        while (is_running) {
+                            std::invoke(receiver, *channel);
+                        }
+                    }));
         }
         spdlog::debug("requester created workers");
     }
