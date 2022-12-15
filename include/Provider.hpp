@@ -32,7 +32,7 @@ public:
                 [&] {
                     while (should_work) {
                         if (auto chan = channel.lock()) {
-                            std::invoke(sender, *chan, generator());
+                            std::invoke(sender, *chan, std::invoke(generator));
                         } else {
                             should_work.exchange(false, std::memory_order::acquire);
                             break;
