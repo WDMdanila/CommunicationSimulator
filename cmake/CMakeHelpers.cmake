@@ -37,6 +37,10 @@ function(set_link_options TARGET_NAME)
     target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
     target_link_libraries(${TARGET_NAME} PRIVATE ${CONAN_LIBS})
     target_compile_options(${TARGET_NAME} PRIVATE
+            -Wl,-z,defs
+            -Wl,-z,now
+            -Wl,-z,relro
+            -Wl,--no-undefined
             -Wno-unused-variable
             -Wno-maybe-uninitialized
             -Werror
@@ -55,6 +59,12 @@ function(set_link_options TARGET_NAME)
             -Wnull-dereference
             -Wuseless-cast
             -Wdouble-promotion
+            -Wformat=2
+            -Wformat-overflow=2
+            -Wformat-truncation=2
+            -Wformat-nonliteral
+            -Wformat-security
+            -Wformat-signedness
             )
     target_link_options(${TARGET_NAME} PRIVATE -rdynamic)
 endfunction()
