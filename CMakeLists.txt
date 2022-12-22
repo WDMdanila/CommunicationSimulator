@@ -16,15 +16,15 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if (CMAKE_COMPILER_IS_GNUCXX AND coverage)
     message("Coverage report ENABLED")
 
-    include(cmake/CodeCoverage.cmake)
+    setup_code_coverage()
     append_coverage_compiler_flags()
     setup_target_for_coverage_gcovr_html(NAME unit_tests_coverage
             EXECUTABLE cd tests/unit_tests && ctest --output-on-failure
-            EXCLUDE ${CMAKE_SOURCE_DIR}/tests/* ${CMAKE_SOURCE_DIR}/apps/* ${CMAKE_SOURCE_DIR}/src/main.cpp)
+            EXCLUDE ${CMAKE_SOURCE_DIR}/tests/* ${CMAKE_SOURCE_DIR}/apps/*)
 
     setup_target_for_coverage_gcovr_html(NAME integration_tests_coverage
             EXECUTABLE cd tests/integration_tests && ctest --output-on-failure
-            EXCLUDE ${CMAKE_SOURCE_DIR}/tests/* ${CMAKE_SOURCE_DIR}/apps/* ${CMAKE_SOURCE_DIR}/src/main.cpp)
+            EXCLUDE ${CMAKE_SOURCE_DIR}/tests/* ${CMAKE_SOURCE_DIR}/apps/*)
 
 else ()
     message("Coverage report disabled")

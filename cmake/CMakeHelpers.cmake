@@ -18,7 +18,7 @@ function(update_submodules)
             message(STATUS "Submodule update")
             execute_submodule(--remote --merge)
             execute_process(COMMAND ${GIT_EXECUTABLE} pull
-                            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/formatters)
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/formatters)
         endif ()
     endif ()
 endfunction()
@@ -78,7 +78,7 @@ function(set_link_options TARGET_NAME)
             -Wnull-dereference
             -Wuseless-cast
             -Wdouble-promotion
-    )
+            )
     target_link_options(${TARGET_NAME} PRIVATE -rdynamic)
 endfunction()
 
