@@ -7,7 +7,6 @@ set(CONAN_SYSTEM_INCLUDES ON)
 include(${CMAKE_SOURCE_DIR}/cmake/CMakeHelpers.cmake)
 
 setup_conan()
-update_submodules()
 
 # Turn on with 'cmake -Dcoverage=ON ..'.
 option(coverage "Build for coverage report." OFF)

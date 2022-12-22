@@ -1,28 +1,5 @@
 include(CMakePrintHelpers)
 
-function(execute_submodule)
-    execute_process(COMMAND ${GIT_EXECUTABLE} submodule update ${ARGN} ./formatters
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            RESULT_VARIABLE GIT_SUBMOD_RESULT)
-    message(Result of "git submodule update ${ARGN} -> ${GIT_SUBMOD_RESULT}")
-endfunction()
-
-function(update_submodules)
-    find_package(Git QUIET)
-    if (GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/.git")
-        # Update submodules as needed
-        option(GIT_SUBMODULE "Check submodules during build" ON)
-        if (GIT_SUBMODULE)
-            message(STATUS "Submodule init")
-            execute_submodule(--init --recursive)
-            message(STATUS "Submodule update")
-            execute_submodule(--remote --merge)
-            execute_process(COMMAND ${GIT_EXECUTABLE} pull
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/formatters)
-        endif ()
-    endif ()
-endfunction()
-
 function(package_add_test TESTNAME)
     cmake_parse_arguments(ARGS "" "" "SOURCES;DEPENDS" ${ARGN})
     add_executable(${TESTNAME} ${ARGS_SOURCES})
