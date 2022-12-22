@@ -82,7 +82,7 @@ function(set_link_options TARGET_NAME)
     target_link_options(${TARGET_NAME} PRIVATE -rdynamic)
 endfunction()
 
-macro(setup_svt_conan)
+macro(setup_conan)
     download_conan_cmake()
 
     include(${CMAKE_BINARY_DIR}/conan/conan.cmake)
@@ -96,10 +96,24 @@ macro(setup_svt_conan)
     )
 endmacro()
 
+macro(setup_code_coverage)
+    download_code_coverage_cmake()
+
+    include(${CMAKE_BINARY_DIR}/cmake/CodeCoverage.cmake)
+endmacro()
+
 function(download_conan_cmake)
     if (NOT EXISTS "${CMAKE_BINARY_DIR}/conan/conan.cmake")
         message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
         file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/master/conan.cmake"
                 "${CMAKE_BINARY_DIR}/conan/conan.cmake")
+    endif ()
+endfunction()
+
+function(download_code_coverage_cmake)
+    if (NOT EXISTS "${CMAKE_BINARY_DIR}/cmake/CodeCoverage.cmake")
+        message(STATUS "Downloading CodeCoverage.cmake from https://github.com/bilke/cmake-modules/blob/master/CodeCoverage.cmake")
+        file(DOWNLOAD "https://raw.githubusercontent.com/bilke/cmake-modules/master/CodeCoverage.cmake"
+                "${CMAKE_BINARY_DIR}/cmake/CodeCoverage.cmake")
     endif ()
 endfunction()

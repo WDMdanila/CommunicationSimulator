@@ -13,7 +13,9 @@ public:
     template <typename R>
     Requester(std::vector<std::shared_ptr<CommunicationChannel>> channels, R&& receiver)
         : channels(std::move(channels)),
-          receiver(receiver) {}
+          receiver(receiver) {
+        assert(std::all_of(this->channels.begin(), this->channels.end(), [] (auto& obj) {return static_cast<bool>(obj);}));
+    }
 
     ~Requester() {
         stop();

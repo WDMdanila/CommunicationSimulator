@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.13)
 project(communication_simulator)
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED 1)
 
 set(CONAN_SYSTEM_INCLUDES ON)
 include(${CMAKE_SOURCE_DIR}/cmake/CMakeHelpers.cmake)
 
-setup_svt_conan()
+setup_conan()
 update_submodules()
 
 # Turn on with 'cmake -Dcoverage=ON ..'.
