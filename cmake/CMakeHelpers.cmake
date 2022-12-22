@@ -96,12 +96,6 @@ macro(setup_conan)
     )
 endmacro()
 
-macro(setup_code_coverage)
-    download_code_coverage_cmake()
-
-    include(${CMAKE_BINARY_DIR}/cmake/CodeCoverage.cmake)
-endmacro()
-
 function(download_conan_cmake)
     if (NOT EXISTS "${CMAKE_BINARY_DIR}/conan/conan.cmake")
         message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
@@ -109,6 +103,12 @@ function(download_conan_cmake)
                 "${CMAKE_BINARY_DIR}/conan/conan.cmake")
     endif ()
 endfunction()
+
+macro(setup_code_coverage)
+    download_code_coverage_cmake()
+
+    include(${CMAKE_BINARY_DIR}/cmake/CodeCoverage.cmake)
+endmacro()
 
 function(download_code_coverage_cmake)
     if (NOT EXISTS "${CMAKE_BINARY_DIR}/cmake/CodeCoverage.cmake")
